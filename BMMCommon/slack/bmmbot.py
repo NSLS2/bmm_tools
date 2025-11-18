@@ -4,21 +4,36 @@ from redis_json_dict import RedisJSONDict
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-#startup_dir = os.path.dirname(os.path.dirname(__file__))
-#profile_configuration = configparser.ConfigParser(interpolation=None)
-#profile_configuration.read_file(open(os.path.join(startup_dir, "BMM_configuration.ini")))
-
 
 class BMMbot():
     '''Simple class to manage conversations via the facility-provided
     Slack proposal channel.
 
+    Instantiation is a bit involved.  There is some configuration that
+    has to be done by the code using this module.  It is possible that
+    different clients might have different Slack secrets, use
+    different NSLS2 redis channels, or use different APIs to PASS.
+
+    In BMM's XAS profile, an INI configuration file is used to specify
+    those parameters.  The relevant lines look like this:
+
+       bmmbot_secret  = /nsls2/data3/bmm/XAS/secrets/bmmbot_secret
+       nsls2_redis = info.bmm.nsls2.bnl.gov
+       pass_api    = https://api.nsls2.bnl.gov/v1/proposal
+
+
     usage
     =====
 
     instantiate client:
-      from BMM_common import bmmbot
+      import redis
+      from BMMCommon.slack.bmmbot import BMMbot
       bmmbot = BMMbot()
+      bmmbot._bmmbot_secret = profile_configuration.get('slack', 'bmmbot_secret')
+      bmmbot._redis_client = redis.Redis(host=profile_configuration.get('services', 'nsls2_redis'))
+      bmmbot._pass_api = profile_configuration.get('services', 'pass_api') + "/{pass_id}/slack-channels"
+      bmmbot.refresh_channel()
+
 
     post a text message:
       bmmbot.post('This is a text message')
