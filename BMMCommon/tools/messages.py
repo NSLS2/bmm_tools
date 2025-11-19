@@ -61,3 +61,20 @@ def whisper(text, end=None):
         
 def boxedtext(text, title='', color='green'):
     cprint(Panel(text, title=title, title_align='left', highlight=True, expand=False, border_style=color))
+
+
+
+def countdown(t):
+    transition = max(int(t/10), 2)
+    while t:
+        mins, secs = divmod(t, 60)
+        if t > transition:
+            timeformat = bold_msg('{:02d}:{:02d}'.format(mins, secs))
+        else:
+            timeformat = warning_msg('{:02d}:{:02d}'.format(mins, secs))
+        print(timeformat, end='\r')
+        time.sleep(1)
+        t -= 1
+    print('Done!', end='\r')
+
+    
