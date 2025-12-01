@@ -1,4 +1,5 @@
 
+from numpy import pi, sin, cos, arcsin, sqrt
 
 HBARC = 1973.27053324
 KTOE  = 3.8099819442818976
