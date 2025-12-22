@@ -19,7 +19,16 @@
 # do something like BMMCommon.devices.usb_camera around line 18
 #      md = BMMCommon.tools.md.common_md
 
+# similarly, there is a common_re:
+#      BMMCommon.tools.md.common_re = RE
+# which can be used throughout BMMCommon in the same manner
+
+
+
 # This works.  No doubt this will meet with Tom's withering disapproval
 # at some point.  Wouldn't be the first time <3
 
+
+
+common_re = None
 common_md = None
