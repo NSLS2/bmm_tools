@@ -85,6 +85,10 @@ def show_snapshot(uid):
         plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-1_image'][0,:])
     elif 'usbcam-2_image' in bmm_catalog[uid]['primary']['data']:
         plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-2_image'][0,:])        
+    elif 'webcam-1_image' in bmm_catalog[uid]['primary']['data']:
+        plt.imshow(bmm_catalog[uid]['primary']['data']['webcam-1_image'][0,:])        
+    elif 'webcam-2_image' in bmm_catalog[uid]['primary']['data']:
+        plt.imshow(bmm_catalog[uid]['primary']['data']['webcam-2_image'][0,:])        
     else:                       # pre-data-security
         this = bmm_catalog[uid].primary.read()
         if 'usbcam1_image' in this:

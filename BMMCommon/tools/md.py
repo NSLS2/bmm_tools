@@ -1,3 +1,4 @@
+import os
 
 # There must be a better way to do this, but Bruce is too crappy of a
 # programmer to know what it is.
@@ -8,12 +9,12 @@
 # BMMCommon modules.
 #
 # The intent here is to link this scalar with RE.md as soon as RE.md
-# is defined or re-defined.  For example, in BMM.user_ns.base around
-# line, around line 125:
+# is defined or re-defined.  For example, in BMM.user_ns.base at line
+# 125-126:
 #      BMMCommon.tools.md.common_md = RE.md
 
 # Later on, when the user is changed by a call to sync_experiment,
-# this must be reset.  This is shown in BMM.user around line 877
+# this must be reset.  This is shown in BMM.user around line 878
 
 # Then, a module in the BMMCommon library that needs this dict should
 # do something like BMMCommon.devices.usb_camera around line 18
@@ -23,6 +24,8 @@
 #      BMMCommon.tools.md.common_re = RE
 # which can be used throughout BMMCommon in the same manner
 
+# finally, there is a utility function which constructs the path to
+# the proposal directory
 
 
 # This works.  No doubt this will meet with Tom's withering disapproval
@@ -32,3 +35,8 @@
 
 common_re = None
 common_md = None
+
+def proposal_base():
+    '''Return the full path to the current proposal directory'''
+    base = os.path.join('/nsls2', 'data3', 'bmm', 'proposals', common_md['cycle'], common_md['data_session'])
+    return base
