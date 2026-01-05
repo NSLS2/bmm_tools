@@ -3,9 +3,6 @@ import numpy
 import matplotlib.pyplot as plt
 from rich import print as cprint
 
-from BMM import user_ns as user_ns_module
-user_ns = vars(user_ns_module)
-
 bmm_catalog = None
 
 def file_resource(record):
@@ -85,6 +82,10 @@ def show_snapshot(uid):
         plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-1_image'][0,:])
     elif 'usbcam-2_image' in bmm_catalog[uid]['primary']['data']:
         plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-2_image'][0,:])        
+    elif 'usbcam-5_image' in bmm_catalog[uid]['primary']['data']:
+        plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-2_image'][0,:])        
+    elif 'usbcam-6_image' in bmm_catalog[uid]['primary']['data']:
+        plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-2_image'][0,:])        
     elif 'webcam-1_image' in bmm_catalog[uid]['primary']['data']:
         plt.imshow(bmm_catalog[uid]['primary']['data']['webcam-1_image'][0,:])        
     elif 'webcam-2_image' in bmm_catalog[uid]['primary']['data']:
@@ -95,9 +96,33 @@ def show_snapshot(uid):
             key = 'usbcam1_image'
         elif 'usbcam2_image' in this:
             key = 'usbcam2_image'
+        elif 'usbcam5_image' in this:
+            key = 'usbcam5_image'
+        elif 'usbcam6_image' in this:
+            key = 'usbcam6_image'
         elif 'xascam_image' in this:
             key = 'xascam_image'
         elif 'anacam_image' in this:
             key = 'anacam_image'
         plt.imshow(numpy.array(this[key])[0])
     plt.grid(False)
+
+
+def full_path(uid):
+    global bmm_catalog
+    if bmm_catalog is None:
+        cprint('[red1]You have not set BMMCommon.tools.db.bmm_catalog[/red1]')
+        return(None)
+    if type(uid) is str:
+        try:
+            record = bmm_catalog[uid]
+        except:
+            return(None)
+
+    fp = os.path.join('/nsls2/data/bmm/proposals',
+                      record.metadata['start']['cycle'],
+                      f"pass-{record.metadata['start']['proposal']['proposal_id']}",
+                      'assets',
+                      file_resource(uid)[0]
+    )
+    return fp
