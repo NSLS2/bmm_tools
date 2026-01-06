@@ -2,7 +2,7 @@
 from ophyd import Component as Cpt
 from ophyd import EpicsSignal, EpicsSignalRO, EpicsSignalWithRBV, Signal, Device
 
-from BMMCommon.tools.messages import *  # error_msg et al. + boxedtext
+from bmm_tools.tools.messages import *  # error_msg et al. + boxedtext
 
 
 class Ring(Device):

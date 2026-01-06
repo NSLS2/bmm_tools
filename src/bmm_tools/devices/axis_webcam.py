@@ -11,8 +11,8 @@ from pathlib import Path
 import numpy
 from PIL import Image
 
-import BMMCommon.tools.md       # obtain a profile's value for RE, RE.md
-md = BMMCommon.tools.md.common_md
+import bmm_tools.tools.md       # obtain a profile's value for RE, RE.md
+md = bmm_tools.tools.md.common_md
 
 
 class ExternalFileReference(Signal):

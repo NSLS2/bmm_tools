@@ -4,8 +4,8 @@ from bluesky.plan_stubs import null
 import uuid
 from rich import print as cprint
 
-from BMMCommon.tools.messages import bold_msg, error_msg, warning_msg, whisper
-from BMMCommon.tools.animated_prompt import PROMPTNC, animated_prompt
+from bmm_tools.tools.messages import bold_msg, error_msg, warning_msg, whisper
+from bmm_tools.tools.animated_prompt import PROMPTNC, animated_prompt
 
 TAB = '\t\t\t\t'
 

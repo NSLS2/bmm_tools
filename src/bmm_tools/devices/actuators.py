@@ -4,10 +4,10 @@ import time
 #from rich import print as cprint
 
 
-import BMMCommon.tools.md       # obtain a profile's value for RE, RE.md
-RE = BMMCommon.tools.md.common_re
+import bmm_tools.tools.md       # obtain a profile's value for RE, RE.md
+RE = bmm_tools.tools.md.common_re
 
-from BMMCommon.tools.msg_hook import BMM_msg_hook
+from bmm_tools.tools.msg_hook import BMM_msg_hook
 
 class EPS_Shutter(Device):
     state = Cpt(EpicsSignal, 'Pos-Sts')

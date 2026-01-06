@@ -11,8 +11,8 @@ from ophyd.areadetector.filestore_mixins import resource_factory, FileStoreItera
 from itertools import count
 from ophyd.areadetector.plugins import JPEGPlugin_V33
 
-import BMMCommon.tools.md       # obtain a profile's value for RE.md
-md = BMMCommon.tools.md.common_md
+import bmm_tools.tools.md       # obtain a profile's value for RE.md
+md = bmm_tools.tools.md.common_md
 
 class BMMFileStoreJPEG(FileStorePluginBase):
     def __init__(self, *args, **kwargs):

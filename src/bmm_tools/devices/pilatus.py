@@ -16,14 +16,14 @@ from ophyd.areadetector.plugins import HDF5Plugin_V33, TIFFPlugin_V33, StatsPlug
 #from BMM import user_ns as user_ns_module
 #user_ns = vars(user_ns_module)
 #md = user_ns["RE"].md
-import BMMCommon.tools.md       # obtain a profile's value for RE.md
-md = BMMCommon.tools.md.common_md
+import bmm_tools.tools.md       # obtain a profile's value for RE.md
+md = bmm_tools.tools.md.common_md
 
 from nslsii.ad33 import SingleTriggerV33
 from ophyd import Component as C
 
 
-from BMMCommon.tools.messages import *  # error_msg et al. + boxedtext
+from bmm_tools.tools.messages import *  # error_msg et al. + boxedtext
 
 
 ######################################################################################

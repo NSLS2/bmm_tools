@@ -6,23 +6,23 @@ import os
 # This file exists as a way of feeding a profile's value of RE.md
 # (facility metadata, used for lots of things, including automated
 # generation of file paths for file-writing IOCs) into the library of
-# BMMCommon modules.
+# bmm_tools modules.
 #
 # The intent here is to link this scalar with RE.md as soon as RE.md
 # is defined or re-defined.  For example, in BMM.user_ns.base at line
 # 125-126:
-#      BMMCommon.tools.md.common_md = RE.md
+#      bmm_tools.tools.md.common_md = RE.md
 
 # Later on, when the user is changed by a call to sync_experiment,
 # this must be reset.  This is shown in BMM.user around line 878
 
-# Then, a module in the BMMCommon library that needs this dict should
-# do something like BMMCommon.devices.usb_camera around line 18
-#      md = BMMCommon.tools.md.common_md
+# Then, a module in the bmm_tools library that needs this dict should
+# do something like bmm_tools.devices.usb_camera around line 18
+#      md = bmm_tools.tools.md.common_md
 
 # similarly, there is a common_re:
-#      BMMCommon.tools.md.common_re = RE
-# which can be used throughout BMMCommon in the same manner
+#      bmm_tools.tools.md.common_re = RE
+# which can be used throughout bmm_tools in the same manner
 
 # finally, there is a utility function which constructs the path to
 # the proposal directory

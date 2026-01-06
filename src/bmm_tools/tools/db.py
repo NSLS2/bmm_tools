@@ -21,15 +21,15 @@ def file_resource(record):
     =============
     Need to push the symbol for the Tiled catalog to this module
 
-      import BMMCommon.tools.db
-      BMMCommon.tools.db.bmm_catalog = bmm_catalog
-      file_resource = BMMCommon.tools.db.file_resource
+      import bmm_tools.tools.db
+      bmm_tools.tools.db.bmm_catalog = bmm_catalog
+      file_resource = bmm_tools.tools.db.file_resource
 
 
     '''
     global bmm_catalog
     if bmm_catalog is None:
-        cprint('[red1]You have not set BMMCommon.tools.db.bmm_catalog[/red1]')
+        cprint('[red1]You have not set bmm_tools.tools.db.bmm_catalog[/red1]')
         return(None)
     if type(record) is str:
         try:
@@ -76,7 +76,7 @@ def show_snapshot(uid):
     '''Quickly plot a snapshot image from DataBroker given its UID.
     '''
     if bmm_catalog is None:
-        cprint('[red1]You have not set BMMCommon.tools.db.bmm_catalog[/red1]')
+        cprint('[red1]You have not set bmm_tools.tools.db.bmm_catalog[/red1]')
         return(None)
     if 'usbcam-1_image' in bmm_catalog[uid]['primary']['data']:
         plt.imshow(bmm_catalog[uid]['primary']['data']['usbcam-1_image'][0,:])
@@ -111,7 +111,7 @@ def show_snapshot(uid):
 def full_path(uid):
     global bmm_catalog
     if bmm_catalog is None:
-        cprint('[red1]You have not set BMMCommon.tools.db.bmm_catalog[/red1]')
+        cprint('[red1]You have not set bmm_tools.tools.db.bmm_catalog[/red1]')
         return(None)
     if type(uid) is str:
         try:

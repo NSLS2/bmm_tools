@@ -1,6 +1,6 @@
 import inspect, time
 from ophyd import EpicsSignalRO
-from BMMCommon.tools.messages import *  # error_msg et al. + boxedtext
+from bmm_tools.tools.messages import *  # error_msg et al. + boxedtext
 
 def is_FMBO_motor(motor):
     inheritance = (str(x) for x in inspect.getmro(motor.__class__))
