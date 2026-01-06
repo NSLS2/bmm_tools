@@ -73,7 +73,7 @@ class BMMFileStoreHDF5(FileStorePluginBase):
         }
         self._generate_resource(resource_kwargs)
     
-class BMMHDF5Plugin(HDF5Plugin_V33, BMMFilestoreHDF5, FileStoreIterativeWrite):
+class BMMHDF5Plugin(HDF5Plugin_V33, BMMFileStoreHDF5, FileStoreIterativeWrite):
     def warmup(self):
         """
         A convenience method for 'priming' the plugin.
