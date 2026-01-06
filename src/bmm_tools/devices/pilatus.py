@@ -22,6 +22,7 @@ md = bmm_tools.tools.md.common_md
 from nslsii.ad33 import SingleTriggerV33
 from ophyd import Component as C
 
+from rich import print as cprint
 
 from bmm_tools.tools.messages import *  # error_msg et al. + boxedtext
 
@@ -72,7 +73,7 @@ class BMMFileStoreHDF5(FileStorePluginBase):
         }
         self._generate_resource(resource_kwargs)
     
-class BMMHDF5Plugin(HDF5Plugin_V33, BMMFileStoreHDF5, FileStoreIterativeWrite):
+class BMMHDF5Plugin(HDF5Plugin_V33, BMMFilestoreHDF5, FileStoreIterativeWrite):
     def warmup(self):
         """
         A convenience method for 'priming' the plugin.
@@ -85,7 +86,16 @@ class BMMHDF5Plugin(HDF5Plugin_V33, BMMFileStoreHDF5, FileStoreIterativeWrite):
         This has been slightly modified by Bruce to avoid a situation where the warmup
         hangs.  Also to add some indication on screen for what is happening.
         """
-        whisper("                        warming up the Pilatus hdf5 plugin...")
+
+        detname = 'Pilatus'         # trigger mode for Pilatus
+        if 'eiger' in self.parent.name:
+            detname = 'Eiger'
+        elif 'mythen' in self.parent.name:
+            detname = 'Mythen'
+        
+
+        cprint(f"             [navajo_white3]warming up the {detname} hdf5 plugin (4 dots) [/navajo_white3]", end='')
+        #whisper("                        warming up the Pilatus hdf5 plugin...")
         self.enable.set(1).wait()
 
         # JOSH: proposed changes for new IOC
@@ -93,6 +103,8 @@ class BMMHDF5Plugin(HDF5Plugin_V33, BMMFileStoreHDF5, FileStoreIterativeWrite):
         tm = 'Internal'         # trigger mode for Pilatus
         if 'eiger' in self.parent.name:
             tm = 'Internal Series'
+        elif 'mythen' in self.parent.name:
+            tm = 'None'
         sigs = OrderedDict([(self.parent.cam.array_callbacks, 1),
                             (self.parent.cam.image_mode, "Single"),
                             (self.parent.cam.trigger_mode, tm),
@@ -116,13 +128,17 @@ class BMMHDF5Plugin(HDF5Plugin_V33, BMMFileStoreHDF5, FileStoreIterativeWrite):
         
         # JOSH: do we need more than 2 seconds here?
         #       adding more time here helps!
-        for i in tqdm(range(4), colour='#7f8c8d'):
+        for i in range(4):
+            cprint("[navajo_white3].[/navajo_white3]", end='')
             ttime.sleep(0.5)  # wait for acquisition
+        # for i in tqdm(range(4), colour='#afaf87'):
+        #     ttime.sleep(0.5)  # wait for acquisition
 
         for sig, val in reversed(list(original_vals.items())):
             ttime.sleep(0.1)
             sig.set(val).wait()
-        whisper("                        done")
+        cprint("[navajo_white3] done[/navajo_white3]")
+
 
     
 
