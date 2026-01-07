@@ -11,6 +11,8 @@ from bluesky.plan_stubs import sleep, mv, null, abs_set
 from bmm_tools.tools.messages import *  # error_msg et al. + boxedtext
 from bmm_tools.tools.animated_prompt import PROMPTNC
 
+from rich import print as cprint
+from rich.panel import Panel
 
 
 
@@ -692,49 +694,54 @@ class XAFSTable(PseudoPositioner):
 
 
 
-
 class GonioTable(PseudoPositioner):
-    def __init__(self, *args, mirror_length, mirror_width, **kwargs):
-        self.mirror_length = mirror_length
-        self.mirror_width  = mirror_width
+    def __init__(self, *args, length, width, **kwargs):
+        self.length = length
+        self.width  = width
         super().__init__(*args, **kwargs)
 
     def where(self):
         #text += "%s:" % self.name.upper())
-        text  = "      [white]vertical = %7.3f mm            YUO = %7.3f\n" % (self.vertical.readback.get(), self.yuo.user_readback.get())
-        text += "      pitch    = %7.3f mrad          YUI = %7.3f\n" % (self.pitch.readback.get(),    self.yui.user_readback.get())
-        text += "      roll     = %7.3f mrad          YD  = %7.3f[/white]"   % (self.roll.readback.get(),     self.yd.user_readback.get())
+        text  = "      vertical = %7.3f mm            YUO = %7.3f mm\n" % (self.vertical.readback.get(), self.yuo.user_readback.get())
+        text += "      lateral  = %7.3f mm            YUI = %7.3f mm\n" % (self.lateral.readback.get(),  self.yui.user_readback.get())
+        text += "      pitch    = %7.3f mrad          YD  = %7.3f mm\n" % (self.pitch.readback.get(),    self.yd.user_readback.get())
+        text += "      roll     = %7.3f mrad          XU  = %7.3f mm\n" % (self.roll.readback.get(),     self.xu.user_readback.get())
+        text += "      yaw      = %7.3f mrad          XD  = %7.3f mm"   % (self.yaw.readback.get(),      self.xd.user_readback.get())
         return text
     def wh(self):
-        boxedtext(text, title='Goniometer Table', color='green')
+        cprint(Panel(self.where(), title='Goniometer table', title_align='left', highlight=True, expand=False, border_style='dark_goldenrod'))
 
     # The pseudo positioner axes:
-    vertical = Cpt(PseudoSingle, limits=(291, 412))
-    pitch    = Cpt(PseudoSingle, limits=(-8, 1))
-    roll     = Cpt(PseudoSingle, limits=(5, 5))
-
+    vertical = Cpt(PseudoSingle, limits=(0, 12))
+    pitch    = Cpt(PseudoSingle, limits=(-3, 3))
+    roll     = Cpt(PseudoSingle, limits=(-3, 3))
+    lateral  = Cpt(PseudoSingle, limits=(-5, 5))
+    yaw      = Cpt(PseudoSingle, limits=(-3, 3))
 
     # The real (or physical) positioners:
     yui = Cpt(EpicsMotor, 'YUI}Mtr')
     yuo = Cpt(EpicsMotor, 'YUO}Mtr')
     yd  = Cpt(EpicsMotor, 'YD}Mtr')
-
+    xu  = Cpt(EpicsMotor, 'XU}Mtr')
+    xd  = Cpt(EpicsMotor, 'XD}Mtr')
+    
     @pseudo_position_argument
     def forward(self, pseudo_pos):
         '''Run a forward (pseudo -> real) calculation'''
-        return self.RealPosition(yd  = pseudo_pos.vertical + 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000),
-                                 yuo = pseudo_pos.vertical - 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000) + 0.5 * self.mirror_width * tan(pseudo_pos.roll/1000),
-                                 yui = pseudo_pos.vertical - 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000) - 0.5 * self.mirror_width * tan(pseudo_pos.roll/1000)
-                                 )
+        return self.RealPosition(yd  = pseudo_pos.vertical + 0.5 * self.length * tan(pseudo_pos.pitch / 1000),
+                                 yuo = pseudo_pos.vertical - 0.5 * self.length * tan(pseudo_pos.pitch / 1000) + 0.5 * self.width * tan(pseudo_pos.roll/1000),
+                                 yui = pseudo_pos.vertical - 0.5 * self.length * tan(pseudo_pos.pitch / 1000) - 0.5 * self.width * tan(pseudo_pos.roll/1000),
+                                 xu  = pseudo_pos.lateral  - 0.5 * self.length * tan(pseudo_pos.yaw   / 1000),
+                                 xd  = pseudo_pos.lateral  + 0.5 * self.length * tan(pseudo_pos.yaw   / 1000) )
 
     @real_position_argument
     def inverse(self, real_pos):
         '''Run an inverse (real -> pseudo) calculation'''
         return self.PseudoPosition(vertical = (real_pos.yd + (real_pos.yuo + real_pos.yui) / 2 ) / 2,
-                                   pitch    = 1000*arctan2( real_pos.yd - (real_pos.yuo + real_pos.yui)/2, self.mirror_length),
-                                   roll     = 1000*arctan2( real_pos.yuo - real_pos.yui,                   self.mirror_width ))
-
-    
+                                   pitch    = 1000*arctan2( real_pos.yd - (real_pos.yuo + real_pos.yui)/2, self.length),
+                                   roll     = 1000*arctan2( real_pos.yuo - real_pos.yui,                   self.width ),
+                                   lateral  = (real_pos.xu + real_pos.xd) / 2,
+                                   yaw      = 1000*arctan2( real_pos.xd  - real_pos.xu,                    self.length) )
 
 
 
