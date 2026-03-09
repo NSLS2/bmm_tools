@@ -70,8 +70,8 @@ class DeadbandMixin(Device, PositionerBase):
         tolerance = self.tolerance.get()
 
         if tolerance < 0:
-            self.move_latch.put(1)
-            return super().move(position, wait=wait, **kwargs)
+           self.move_latch.put(1)
+           return super().move(position, wait=wait, **kwargs)
         else:
             status = super().move(position, wait=False, **kwargs)
             setpoint = position
@@ -260,6 +260,7 @@ class FMBOEpicsMotor(EpicsMotor):
                     elif 'slits3' in self.name or 'dm3' in self.name:
                         which = 'dm3'
 
+                    print(f'Motor {self.name} raised an alarm during motion, status={status} severity {severity}')
                     error_msg('\n\n' + f'try doing:  ks.cycle(\'{which}\')')
                     print('Then try your last command again.  If this error repeats, call for help.')
                     whisper('The possible arguments for ks.cycle() are m3, m2, dcm, slits2, and dm3\n')
@@ -360,6 +361,7 @@ class FMBOThinEpicsMotor(EpicsMotor):
                     elif 'slits3' in self.name or 'dm3' in self.name:
                         which = 'dm3'
 
+                    print(f'Motor {self.name} raised an alarm during motion, status={status} severity {severity}')
                     error_msg('\n\n' + f'try doing:  ks.cycle(\'{which}\')')
                     print('Then try your last command again.  If this error repeats, call for help.')
                     whisper('The possible arguments for ks.cycle() are m3, m2, dcm, slits2, and dm3\n')
@@ -436,6 +438,7 @@ class XAFSEpicsMotor(FMBOEpicsMotor):
                     elif 'slits3' in self.name or 'dm3' in self.name:
                         which = 'dm3'
 
+                    print(f'Motor {self.name} raised an alarm during motion, status={status} severity {severity}')
                     error_msg('\n\n' + f'try doing:  ks.cycle(\'{which}\')')
                     print('Then try your last command again.  If this error repeats, call for help.')
                     whisper('The possible arguments for ks.cycle() are m3, m2, dcm, slits2, and dm3\n')
@@ -538,6 +541,12 @@ class Mirrors(PseudoPositioner):
         self.mirror_width  = mirror_width
         super().__init__(*args, **kwargs)
 
+        if self.name == 'm2':
+            self.bender = XAFSEpicsMotor('XF:06BMA-OP{Mir:M2-Ax:Bend}Mtr', name='m2_bender')
+        else:
+            self.bender = None
+            
+
     def _done_moving(self, *args, **kwargs):
         ## this method is originally defined as Positioner, a base class of EpicsMotor
         ## tack on instructions for killing the motor after movement
@@ -583,18 +592,13 @@ class Mirrors(PseudoPositioner):
             print(f'Some {self.name.capitalize()} motors are disconnected')
             print('Do check_for_synaxis() for more information.')
             return()
-        stripe = ''
-        if self.name.lower() == 'm3':
-            if self.xu.user_readback.get() > 0:
-                stripe = '(Rh/Pt stripe)'
-            else:
-                stripe = '(Si stripe)'
-        #text += "%s: %s" % (self.name.upper(), stripe))
         text  = "      [white]vertical = %7.3f mm            YU  = %7.3f\n" % (self.vertical.readback.get(), self.yu.user_readback.get())
         text += "      lateral  = %7.3f mm            YDO = %7.3f\n" % (self.lateral.readback.get(),  self.ydo.user_readback.get())
         text += "      pitch    = %7.3f mrad          YDI = %7.3f\n" % (self.pitch.readback.get(),    self.ydi.user_readback.get())
         text += "      roll     = %7.3f mrad          XU  = %7.3f\n" % (self.roll.readback.get(),     self.xu.user_readback.get())
         text += "      yaw      = %7.3f mrad          XD  = %7.3f[/white]"   % (self.yaw.readback.get(),      self.xd.user_readback.get())
+        if self.bender is not None:
+            text += f"\n      [white]bender   =  {int(self.bender.position)} steps[/white]"
         #if self.name.lower() == 'm2':
         #    text += '\n      bender   = %9.1f steps' % m2_bender.user_readback.get()
         return text
@@ -609,6 +613,11 @@ class Mirrors(PseudoPositioner):
                 stripe = ' (Rh/Pt stripe)'
             else:
                 stripe = ' (Si stripe)'
+        elif self.name.lower() == 'm2':
+            if self.bender.position < 150000:
+                stripe = ' (focused for XRD)'
+            else:
+                stripe = ' (focused for XAS)'
         boxedtext(self.where(), title=f'{self.name} {stripe}', color='green')
 
     # The pseudo positioner axes:

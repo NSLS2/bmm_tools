@@ -30,7 +30,7 @@ class DCM(PseudoPositioner):
         #self.prompt  = True
 
         ## some configuration
-        self.roll_111 = -6.05644
+        self.roll_111 = -0.2633  # Feb 16, 2026
         self.acc_fast = 0.2
 
         self.pitch = VacuumEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:P2}Mtr',  name='dcm_pitch')
@@ -60,6 +60,9 @@ class DCM(PseudoPositioner):
     def wavelength(self):
         return 2*pi*HBARC / float(self.energy.position)
 
+    def get_wavelength(self, energy):
+        return 2*pi*HBARC / float(energy)
+    
     @property
     def en(self):
         return float('%.6f' % float(self.energy.position))
@@ -76,6 +79,23 @@ class DCM(PseudoPositioner):
         super()._done_moving(*args, **kwargs)
         self.para.kill_cmd.put(1)
         self.perp.kill_cmd.put(1)
+
+    def bragg_small_move(self, direction=1, step=None, verbose=False):
+        #if verbose is True:
+        if direction == 1:
+            cprint('[bold black]Pre-moving in the positive Bragg (lower energy) direction[/bold black]')
+        else:
+            cprint('[bold black]Pre-moving in the negative Bragg (higher energy) direction[/bold black]')
+        self.bragg.kill()
+        yield from sleep(0.1)
+        if step is None:
+            step = round(self.bragg.position/100, 3)
+        yield from mvr(self.bragg, direction*step)
+        #if verbose is True:
+        cprint('[bold black]finished pre-move[/bold black]')
+        self.bragg.kill()
+        #self.bragg.enable()
+                
 
     def where(self):
         text  = "%s = %.1f   %s = Si(%s)   %s = %.6f\n" % \
@@ -116,7 +136,7 @@ class DCM(PseudoPositioner):
 
     
     
-    def recover(self):
+    def recover(self, not_x=False):
         '''Home and re-position all DCM motors after a power interruption.
         '''
         self.bragg.acceleration.put(self.acc_fast)
@@ -131,16 +151,22 @@ class DCM(PseudoPositioner):
         yield from mv(self.roll.home_signal,  1)
         yield from mv(self.para.home_signal,  1)
         yield from mv(self.perp.home_signal,  1)
-        yield from mv(self.x.home_signal,     1)
+        if not_x is False:
+            yield from mv(self.x.home_signal,     1)
         yield from sleep(1.0)
         ## wait for them to be homed
         print('Begin homing DCM motors:\n')
-        hvalues = (self.bragg.hocpl.get(), self.pitch.hocpl.get(), self.roll.hocpl.get(), self.para.hocpl.get(),
-                   self.perp.hocpl.get(), self.x.hocpl.get())
+        hvalues = [self.bragg.hocpl.get(), self.pitch.hocpl.get(), self.roll.hocpl.get(), self.para.hocpl.get(),
+                   self.perp.hocpl.get()]
+        if not_x is False:
+            hvalues.append(self.x.hocpl.get())
         while any(v == 0 for v in hvalues):
-            hvalues = (self.bragg.hocpl.get(), self.pitch.hocpl.get(), self.roll.hocpl.get(), self.para.hocpl.get(),
-                       self.perp.hocpl.get(), self.x.hocpl.get())
-            strings = ['Bragg', 'pitch', 'roll', 'para', 'perp', 'x']
+            hvalues = [self.bragg.hocpl.get(), self.pitch.hocpl.get(), self.roll.hocpl.get(), self.para.hocpl.get(),
+                       self.perp.hocpl.get()]
+            strings = ['Bragg', 'pitch', 'roll', 'para', 'perp']
+            if not_x is False:
+                hvalues.append(self.x.hocpl.get())
+                strings.append('x')
             for i,v in enumerate(hvalues):
                 strings[i] = f'[white]{strings[i]}[/white]' if hvalues[i] == 1 else f'[green]{strings[i]}[/green]'
             cprint('  '.join(strings), end='\r')
@@ -149,8 +175,9 @@ class DCM(PseudoPositioner):
 
         ## move x into the correct position for Si(111)
         print('\n')
-        yield from mv(self.x, 1)
-        yield from mv(self.x, 0.45)
+        if not_x is False:
+            yield from mv(self.x, 1)
+            yield from mv(self.x, 0.45)
         ## move pitch and roll to the Si(111) positions
         this_energy = self.energy.readback.get()
         yield from self.kill_plan()
@@ -208,7 +235,7 @@ class DCM(PseudoPositioner):
         perp  = self.offset / (2*cos(angle))
         if quiet is False:
             print(f'Si({self._crystal}), {energy} ev: bragg={bragg:.4f}  para={para:.4f}  perp={perp:.4f}\n')
-        return(bragg, para, perp)
+        return(float(bragg), float(para), float(perp))
 
     @pseudo_position_argument
     def forward(self, pseudo_pos):

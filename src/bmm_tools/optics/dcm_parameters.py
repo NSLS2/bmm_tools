@@ -17,11 +17,11 @@ class dcm_parameters():
     '''
 
     def __init__(self):
-        self.dspacing_111 = 3.1355248  # 13 November, 2025
-        self.dspacing_311 = 1.6376262  # 8 September, 2025
+        self.dspacing_111 = 3.1351937  # 3 March, 2026
+        self.dspacing_311 = 1.6376262  # 22 February, 2026
 
-        self.offset_111 = 16.0800639   # 13 November, 2025
-        self.offset_311 = 15.9881364   # 8 September, 2025
+        self.offset_111 = 16.9261335   # 4 March, 2026
+        self.offset_311 = 15.79226     # 22 February, 2026
         
 ## see calibrate_pitch in BMM/mono_calibration.py
 def approximate_pitch(energy, xtal='111'):
@@ -40,14 +40,16 @@ def approximate_pitch(energy, xtal='111'):
 
     Updated
     =======
-    8 September 2025
+    19-22 February 2026
 
     '''
     if xtal == '111':
-        m = -4.1409e-06
-        b = 4.47946925
+        #return(1.309)
+        m = -4.2553e-06
+        b = 1.34835398
         return(m*energy + b)
     else:
-        m = -3.3122e-06
-        b = 2.38902936
-        return(m*energy + b)
+        return(3.9195)
+        #m = -3.3122e-06
+        #b = 2.38902936
+        #return(m*energy + b)

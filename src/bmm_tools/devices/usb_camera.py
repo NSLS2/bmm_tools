@@ -4,6 +4,7 @@ from pathlib import PurePath
 from nslsii.ad33 import SingleTriggerV33
 from ophyd import Component as C
 from ophyd.areadetector import AreaDetector, ImagePlugin
+from ophyd.areadetector.detectors import ProsilicaDetector
 from ophyd.areadetector.filestore_mixins import (
     FileStorePluginBase,
 )
@@ -106,7 +107,7 @@ class BMMJPEGPlugin(JPEGPlugin_V33, BMMFileStoreJPEG):
         super().stage(*args, **kwargs)
 
 
-class BMMUVC(AreaDetector):
+class BMMUVC(ProsilicaDetector): #AreaDetector):
     image = C(ImagePlugin, "image1:")
     jpeg = C(
         BMMJPEGPlugin,

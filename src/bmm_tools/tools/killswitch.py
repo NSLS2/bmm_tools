@@ -179,7 +179,7 @@ class KillSwitch(Device):
                     axis.kill()
                 except:
                     pass
-        elif mc == dcm:
+        elif mc == 'dcm':
             self.dcm_device.ena()
             time.sleep(0.5)
             self.dcm_device.kill()

@@ -48,12 +48,12 @@ class BMMSuspenders():
             cprint(f'[orange_red1]{TAB}failed to create bpms suspender:[/orange_red1] {e}')
             pass
 
-        try:
-            self.suspender_sha = SuspendBoolLow(self.sha.state, sleep=60)
-            self.all_suspenders.append(self.suspender_sha)
-        except Exception as e:
-            cprint(f'[orange_red1]{TAB}failed to create sha suspender:[/orange_red1] {e}')
-            pass
+        # try:
+        #     self.suspender_sha = SuspendBoolLow(self.sha.state, sleep=60)
+        #     self.all_suspenders.append(self.suspender_sha)
+        # except Exception as e:
+        #     cprint(f'[orange_red1]{TAB}failed to create sha suspender:[/orange_red1] {e}')
+        #     pass
         
         try:
             self.suspender_shb = SuspendBoolHigh(self.shb.state, sleep=5,
