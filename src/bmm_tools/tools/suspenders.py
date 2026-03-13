@@ -23,20 +23,25 @@ class BMMSuspenders():
 
         self.all_suspenders = list()
 
-        self.suspender_ring_current = None
-        self.suspender_bmps = None
+        #self.suspender_ring_current = None
+        #self.suspender_bmps = None
 
         self.suspenders_engaged = False
         self.busy = False
+
+        self.errors = ''
         
         try:
+            #print(self.ring.filltarget.connected)
+            #print(self.ring.filltarget.get())
             if self.ring.filltarget.connected is True and self.ring.filltarget.get() > 20:
-                self.suspender_ring_current = SuspendFloor(self.ring.current, 10, resume_thresh=0.9 * ring.filltarget.get(),
-                                                           sleep=60,
+                self.suspender_ring_current = SuspendFloor(self.ring.current, 10, resume_thresh=0.9 * self.ring.filltarget.get(),
+                                                           sleep=120,
                                                            pre_plan=self.beamdown_message,
                                                            post_plan=self.beamup_message)
                 self.all_suspenders.append(self.suspender_ring_current)
         except Exception as e:
+            self.errors += f'failed to create ring current suspender: {e}\n'
             cprint(f'[orange_red1]{TAB}failed to create ring current suspender: {e}[/orange_red1]')
             pass
 
@@ -45,6 +50,7 @@ class BMMSuspenders():
             self.suspender_bmps = SuspendBoolLow(self.bmps.state, sleep=60)
             self.all_suspenders.append(self.suspender_bmps)
         except Exception as e:
+            self.errors += f'failed to create bpms suspender: {e}\n'
             cprint(f'[orange_red1]{TAB}failed to create bpms suspender:[/orange_red1] {e}')
             pass
 
@@ -52,6 +58,7 @@ class BMMSuspenders():
         #     self.suspender_sha = SuspendBoolLow(self.sha.state, sleep=60)
         #     self.all_suspenders.append(self.suspender_sha)
         # except Exception as e:
+        #     self.errors += 'failed to create sha suspender: {e}'
         #     cprint(f'[orange_red1]{TAB}failed to create sha suspender:[/orange_red1] {e}')
         #     pass
         
@@ -62,6 +69,7 @@ class BMMSuspenders():
             )
             self.all_suspenders.append(self.suspender_shb)
         except Exception as e:
+            self.errors += 'failed to create shb suspender: {e}\n'
             cprint(f'[orange_red1]{TAB}failed to create shb suspender:[/orange_red1] {e}')
             pass
 
