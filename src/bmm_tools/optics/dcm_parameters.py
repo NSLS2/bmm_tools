@@ -47,7 +47,7 @@ def approximate_pitch(energy, xtal='111'):
         #return(1.309)
         m = -4.2553e-06
         b = 1.34835398
-        return(m*energy + b)
+        return(m*energy + b + 0.02)
     else:
         #return(3.9195)
         m = -3.1384e-06

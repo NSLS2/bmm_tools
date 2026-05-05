@@ -108,7 +108,7 @@ class BMMJPEGPlugin(JPEGPlugin_V33, BMMFileStoreJPEG):
 
 
 class BMMUVC(ProsilicaDetector): #AreaDetector):
-    image = C(ImagePlugin, "image1:")
+    #image = C(ImagePlugin, "image1:")  # this plugin is not needed.  Now this works with UVC & VMB cameras.
     jpeg = C(
         BMMJPEGPlugin,
         "JPEG1:",
@@ -120,8 +120,10 @@ class BMMUVC(ProsilicaDetector): #AreaDetector):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.stage_sigs.update([(self.cam.trigger_mode, "Internal")])
-
+        if 'UVC' in self.cam.port_name.get():
+            self.stage_sigs.update([(self.cam.trigger_mode, 0)]) # "Internal")])
+        elif 'VMB' in self.cam.port_name.get():
+            self.stage_sigs.update([(self.cam.trigger_mode, 1)]) # "Internal")])
 
     def make_data_key(self):
         source = "PV:{}".format(self.prefix)

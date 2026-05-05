@@ -131,8 +131,7 @@ class BMMbot():
             with open(fname, 'r') as myfile:
                 text=myfile.read()
             return text
-        facility_dict         = RedisJSONDict(redis_client=self._redis_client, prefix='xas-')
-        data_session          = facility_dict['data_session']
+        data_session          = self._redis_client['data_session'].decode('utf-8')
         self.pass_id          = data_session.replace('pass-','')
         self.api_url          = self._pass_api.format(pass_id=self.pass_id)  # see line 14
         response              = requests.get(self.api_url)
