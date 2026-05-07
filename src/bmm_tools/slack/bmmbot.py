@@ -3,7 +3,7 @@ import redis, configparser, os, requests, json, random, pprint
 from redis_json_dict import RedisJSONDict
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-
+import orjson
 
 class BMMbot():
     '''Simple class to manage conversations via the facility-provided
@@ -30,7 +30,7 @@ class BMMbot():
       from bmm_tools.slack.bmmbot import BMMbot
       bmmbot = BMMbot()
       bmmbot._bmmbot_secret = profile_configuration.get('slack', 'bmmbot_secret')
-      bmmbot._redis_client = redis.Redis(host=profile_configuration.get('services', 'nsls2_redis'))
+      bmmbot._redis_client = redis.Redis( <appropriate arguments> )
       bmmbot._pass_api = profile_configuration.get('services', 'pass_api') + "/{pass_id}/slack-channels"
       bmmbot.refresh_channel()
 
@@ -108,6 +108,10 @@ class BMMbot():
         print('Channel data from NSLS-II API:')
         pprint.pprint(self.channel_data)
         print()
+        print(f'data_session      = {orjson.loads(self._redis_client["data_session"])}')
+        print(f'cycle             = {orjson.loads(self._redis_client["cycle"])}')
+        print(f'username          = {orjson.loads(self._redis_client["username"])}')
+        print()
         print(f'_post_allowed     = {self._post_allowed}')
         print(f'pass_id           = {self.pass_id}')
         print(f'api_url           = {self.api_url}')
@@ -131,7 +135,7 @@ class BMMbot():
             with open(fname, 'r') as myfile:
                 text=myfile.read()
             return text
-        data_session          = self._redis_client['data_session'].decode('utf-8')
+        data_session          = orjson.loads(self._redis_client['data_session'])
         self.pass_id          = data_session.replace('pass-','')
         self.api_url          = self._pass_api.format(pass_id=self.pass_id)  # see line 14
         response              = requests.get(self.api_url)
