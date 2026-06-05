@@ -65,7 +65,7 @@ class AxisCaprotoCam(Device):
 
     @property
     def root_path_str(self):
-        root_path = f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/"
+        root_path = f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/"
         return root_path
 
 
@@ -139,11 +139,11 @@ class AxisCaprotoCam(Device):
 
 
 # axis_cam5 = AxisCaprotoCam("XF:06BM-ES{AxisCaproto:5}:", name="webcam-2",
-#                            root_dir="/nsls2/data3/bmm/proposals/2024-2/pass-301027/assets")
+#                            root_dir="/nsls2/data/bmm/proposals/2024-2/pass-301027/assets")
 # axis_cam6 = AxisCaprotoCam("XF:06BM-ES{AxisCaproto:6}:", name="webcam-1",
-#                            root_dir="/nsls2/data3/bmm/proposals/2024-2/pass-301027/assets")
+#                            root_dir="/nsls2/data/bmm/proposals/2024-2/pass-301027/assets")
 
-# def acquire_axis(cam=axis_cam5, write_dir=f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/default/"):
+# def acquire_axis(cam=axis_cam5, write_dir=f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/default/"):
 #     cam.write_dir.put(write_dir)
 #     cam.file_name.put(f"{cam.name}_{uuid.uuid4()}.jpeg")
 

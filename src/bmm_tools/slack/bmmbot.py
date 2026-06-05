@@ -3,7 +3,7 @@ import redis, configparser, os, requests, json, random, pprint
 from redis_json_dict import RedisJSONDict
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-import orjson
+#import orjson
 
 class BMMbot():
     '''Simple class to manage conversations via the facility-provided
@@ -17,7 +17,7 @@ class BMMbot():
     In BMM's XAS profile, an INI configuration file is used to specify
     those parameters.  The relevant lines look like this:
 
-       bmmbot_secret  = /nsls2/data3/bmm/XAS/secrets/bmmbot_secret
+       bmmbot_secret  = /nsls2/data/bmm/XAS/secrets/bmmbot_secret
        nsls2_redis = info.bmm.nsls2.bnl.gov
        pass_api    = https://api.nsls2.bnl.gov/v1/proposal
 
@@ -108,9 +108,9 @@ class BMMbot():
         print('Channel data from NSLS-II API:')
         pprint.pprint(self.channel_data)
         print()
-        print(f'data_session      = {orjson.loads(self._redis_client["data_session"])}')
-        print(f'cycle             = {orjson.loads(self._redis_client["cycle"])}')
-        print(f'username          = {orjson.loads(self._redis_client["username"])}')
+        print(f'data_session      = {self._redis_client["data_session"]}')
+        print(f'cycle             = {self._redis_client["cycle"]}')
+        print(f'username          = {self._redis_client["username"]}')
         print()
         print(f'_post_allowed     = {self._post_allowed}')
         print(f'pass_id           = {self.pass_id}')
@@ -135,13 +135,16 @@ class BMMbot():
             with open(fname, 'r') as myfile:
                 text=myfile.read()
             return text
-        data_session          = orjson.loads(self._redis_client['data_session'])
+
+        data_session          = str(self._redis_client['data_session'])
+        #data_session          = orjson.loads(self._redis_client['data_session'])
         self.pass_id          = data_session.replace('pass-','')
         self.api_url          = self._pass_api.format(pass_id=self.pass_id)  # see line 14
         response              = requests.get(self.api_url)
         self.channel_data     = json.loads(response.text)
         self.non_chat_channel = None
         self.chat_channel     = None
+
         for c in self.channel_data:
             if c['name'] == data_session + '-bmm':
                 self.non_chat_channel = c['conversation_id']

@@ -99,7 +99,7 @@ class BMMJPEGPlugin(JPEGPlugin_V33, BMMFileStoreJPEG):
 
     @property
     def root_path_str(self):
-        root_path = f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/{self.parent.name}/"
+        root_path = f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/{self.parent.name}/"
         return root_path
 
     def stage(self, *args, **kwargs):
@@ -112,10 +112,10 @@ class BMMUVC(ProsilicaDetector): #AreaDetector):
     jpeg = C(
         BMMJPEGPlugin,
         "JPEG1:",
-        write_path_template=f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/%Y/%m/%d/",
-        read_path_template=f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/%Y/%m/%d/",
+        write_path_template=f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/%Y/%m/%d/",
+        read_path_template=f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/%Y/%m/%d/",
         read_attrs=[],
-        root=f"/nsls2/data3/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/",
+        root=f"/nsls2/data/bmm/proposals/{md['cycle']}/{md['data_session']}/assets/usbcam/",
     )
 
     def __init__(self, *args, **kwargs):
@@ -153,4 +153,9 @@ class BMMUVC(ProsilicaDetector): #AreaDetector):
 
 class BMMUVCSingleTrigger(SingleTriggerV33, BMMUVC):
 
-    pass
+    def brighter(self, value=0.01):
+        current = self.cam.acquire_time.get()
+        self.cam.acquire_time.put(current+value)
+    def dimmer(self, value=0.01):
+        self.brighter(value=-1*value)
+

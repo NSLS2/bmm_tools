@@ -192,4 +192,7 @@ class BMM_DIWater(Device):
     return_temperature = Cpt(EpicsSignal, 'T:Return-I')
     supply_pressure = Cpt(EpicsSignal, 'P:Supply-I')
     supply_temperature = Cpt(EpicsSignal, 'T:Supply-I')
-    
+
+class PBS_DI(Device):
+    pbsa_flow = Cpt(EpicsSignal, 'F:A1-I')
+    pbsb_flow = Cpt(EpicsSignal, 'F:B1-I')

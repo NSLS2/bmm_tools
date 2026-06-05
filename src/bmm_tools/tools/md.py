@@ -38,5 +38,5 @@ common_md = None
 
 def proposal_base():
     '''Return the full path to the current proposal directory'''
-    base = os.path.join('/nsls2', 'data3', 'bmm', 'proposals', common_md['cycle'], common_md['data_session'])
+    base = os.path.join('/nsls2', 'data', 'bmm', 'proposals', common_md['cycle'], common_md['data_session'])
     return base
