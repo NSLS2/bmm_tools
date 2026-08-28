@@ -659,16 +659,16 @@ class Mirrors(PseudoPositioner):
 
 
 class XAFSTable(PseudoPositioner):
-    def __init__(self, *args, mirror_length, mirror_width, **kwargs):
-        self.mirror_length = mirror_length
-        self.mirror_width  = mirror_width
+    def __init__(self, *args, table_length, table_width, **kwargs):
+        self.table_length = table_length
+        self.table_width  = table_width
         super().__init__(*args, **kwargs)
 
     def where(self):
         #text += "%s:" % self.name.upper())
-        text  = "      [white]vertical = %7.3f mm            YU  = %7.3f\n" % (self.vertical.readback.get(), self.yu.user_readback.get())
-        text += "      pitch    = %7.3f mrad          YDO = %7.3f\n" % (self.pitch.readback.get(),    self.ydo.user_readback.get())
-        text += "      roll     = %7.3f mrad          YDI = %7.3f[/white]"   % (self.roll.readback.get(),     self.ydi.user_readback.get())
+        text  = "      [white]vertical = %7.3f mm            YU = %7.3f mm\n" % (self.vertical.readback.get(), self.yu.user_readback.get())
+        text += "      pitch    = %7.3f mrad          YD = %7.3f mm" % (self.pitch.readback.get(),    self.yd.user_readback.get())
+        #text += "      roll     = %7.3f mrad          YDI = %7.3f[/white]"   % (self.roll.readback.get(),     self.ydi.user_readback.get())
         return text
     def wh(self):
         boxedtext(self.where(), title='XAFS Table', color='green')
@@ -676,28 +676,29 @@ class XAFSTable(PseudoPositioner):
     # The pseudo positioner axes:
     vertical = Cpt(PseudoSingle, limits=(5, 145))
     pitch    = Cpt(PseudoSingle, limits=(-8, 6))
-    roll     = Cpt(PseudoSingle, limits=(5, 5))
+    #roll     = Cpt(PseudoSingle, limits=(5, 5))
 
 
     # The real (or physical) positioners:
     yu  = Cpt(EpicsMotor, 'YU}Mtr')
-    ydo = Cpt(EpicsMotor, 'YDO}Mtr')
-    ydi = Cpt(EpicsMotor, 'YDI}Mtr')
+    yd = Cpt(EpicsMotor, 'YDI}Mtr')
+    #ydo = Cpt(EpicsMotor, 'YDO}Mtr')
 
     @pseudo_position_argument
     def forward(self, pseudo_pos):
         '''Run a forward (pseudo -> real) calculation'''
-        return self.RealPosition(yu  = pseudo_pos.vertical - 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000),
-                                 ydo = pseudo_pos.vertical + 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000) + 0.5 * self.mirror_width * tan(pseudo_pos.roll/1000),
-                                 ydi = pseudo_pos.vertical + 0.5 * self.mirror_length * tan(pseudo_pos.pitch / 1000) - 0.5 * self.mirror_width * tan(pseudo_pos.roll/1000)
+        return self.RealPosition(yu = pseudo_pos.vertical - 0.5 * self.table_length * tan(pseudo_pos.pitch / 1000),
+                                 yd = pseudo_pos.vertical + 0.5 * self.table_length * tan(pseudo_pos.pitch / 1000) # + 0.5 * self.table_width * tan(pseudo_pos.roll/1000),
+                                 #ydi = pseudo_pos.vertical + 0.5 * self.table_length * tan(pseudo_pos.pitch / 1000) - 0.5 * self.table_width * tan(pseudo_pos.roll/1000)
                                  )
 
     @real_position_argument
     def inverse(self, real_pos):
         '''Run an inverse (real -> pseudo) calculation'''
-        return self.PseudoPosition(vertical = (real_pos.yu + (real_pos.ydo + real_pos.ydi) / 2 ) / 2,
-                                   pitch    = 1000*arctan2( (real_pos.ydo + real_pos.ydi)/2 - real_pos.yu, self.mirror_length),
-                                   roll     = 1000*arctan2( real_pos.ydo - real_pos.ydi,                   self.mirror_width ))
+        return self.PseudoPosition(vertical = (real_pos.yu + real_pos.yd ) / 2,
+                                   pitch    = 1000*arctan2( real_pos.yd - real_pos.yu, self.table_length),
+                                   #roll     = 1000*arctan2( real_pos.ydo - real_pos.ydi,                   self.table_width )
+        )
 
 
 

@@ -20,7 +20,7 @@ class dcm_parameters():
         self.dspacing_111 = 3.1354087  # 19 May, 2026
         self.dspacing_311 = 1.6375686  # 30 March, 2026
 
-        self.offset_111 = 16.9300057   # 19 May, 2026
+        self.offset_111 = 16.936203199999998   #   approximate August 3 2026    16.9300057   # 19 May, 2026
         self.offset_311 = 17.0996517   # 30 March, 2026
         
 ## see calibrate_pitch in BMM/mono_calibration.py

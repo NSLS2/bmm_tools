@@ -116,7 +116,7 @@ class BMMbot():
         print(f'pass_id           = {self.pass_id}')
         print(f'api_url           = {self.api_url}')
         print(f'non_chat_channel  = {self.non_chat_channel}')
-        print(f'chat_channel      = {self.non_chat_channel}')
+        print(f'chat_channel      = {self.chat_channel}')
         print(f'random flag emoji = {self.random_flag()}')
 
     def test(self):
