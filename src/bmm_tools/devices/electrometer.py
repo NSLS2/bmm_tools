@@ -108,7 +108,8 @@ class BMMDualEM(QuadEM):
 class IntegratedIC(BMMDualEM):
     bias = Cpt(EpicsSignal, 'BiasVoltage')
     capacitor_range = Cpt(EpicsSignal, 'Range')
-
+    averaging_time = Cpt(EpicsSignal, 'AveragingTime')
+    
     def enable_electrometer(self):
         '''Set various quadEM parameters to the values used at BMM.  This is
         particularly useful after power cycling or some other
@@ -129,10 +130,11 @@ class IntegratedIC(BMMDualEM):
                      self.prefix + 'PosY:EnableCallbacks')
         for pv in stats_pvs:
             EpicsSignal(pv, name='').put(1)
-        EpicsSignal(self.prefix + 'Range', name='').put(7)
-        EpicsSignal(self.prefix + 'AveragingTime', name='').put(0.5)
-        EpicsSignal(self.prefix + 'Acquire', name='').put(1)
-        EpicsSignal(self.prefix + 'BiasVoltage', name='').put(200)
+        self.averaging_time.put(0.5)
+        self.bias.put(200)           # bias voltage
+        self.capacitor_range.put(0)  # 1 nC
+        self.acquire_mode.put(0)     # continuous mode
+        self.acquire.put(1)          # acquiring
 
     def dark_current(self):
         print(f'Measuring current offsets for {self.name}, this may take several seconds')

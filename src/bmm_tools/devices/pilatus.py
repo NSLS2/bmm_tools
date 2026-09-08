@@ -206,7 +206,7 @@ class BMMPilatus(AreaDetector):
             shape=shape,
             source=source,
             dtype="array",
-            dtype_str="<f4",
+            dtype_str="<i4",
             external="FILESTORE:",
         )
         #print(data_key)

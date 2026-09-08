@@ -12,6 +12,8 @@ from bmm_tools.tools.md import proposal_base
 
 
 class BMMKafka():
+    end_station = 'xas'
+    
     def __init__(self, *args, **kwargs):
 
         if 'rkvs' in kwargs: self.rkvs = kwargs['rkvs']
@@ -32,6 +34,7 @@ class BMMKafka():
         documentation for details.
         
         '''
+        msg['_end_station'] = self.end_station
         self.producer.produce(['bmm', msg])
 
     def close_line_plots(self):

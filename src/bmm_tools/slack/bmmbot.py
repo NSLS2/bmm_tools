@@ -1,5 +1,5 @@
 
-import redis, configparser, os, requests, json, random, pprint
+import redis, configparser, os, requests, json, random, pprint, time
 from redis_json_dict import RedisJSONDict
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -45,6 +45,7 @@ class BMMbot():
       bmmbot.refresh_channel()
 
     '''
+    current_end_station = 'xas'
     def __init__(self):
         self._post_allowed = True
         self._bmmbot_secret = None # profile_configuration.get('slack', 'bmmbot_secret')
@@ -103,10 +104,14 @@ class BMMbot():
             print('Slack image upload failed for reason: ' + e.response["error"])
             self.post(f'failed to post image: {fname}')
 
-    def describe(self):
+    def describe(self, end_station='xas'):
         '''Debugging message printed to screen.'''
+        if self.current_end_station != end_station:
+            self.refresh_channel(end_station)
         print('Channel data from NSLS-II API:')
         pprint.pprint(self.channel_data)
+        print()
+        print(f'{end_station      = }')
         print()
         print(f'data_session      = {self._redis_client["data_session"]}')
         print(f'cycle             = {self._redis_client["cycle"]}')
@@ -119,17 +124,21 @@ class BMMbot():
         print(f'chat_channel      = {self.chat_channel}')
         print(f'random flag emoji = {self.random_flag()}')
 
-    def test(self):
+    def test(self, end_station='xas'):
+        if self.current_end_station != end_station:
+            self.refresh_channel(end_station)
         self.post(f'testing ... {self.random_flag()}')
-
+        # [country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes#Current_ISO_3166_country_codes)
         
-    def refresh_channel(self):
+    def refresh_channel(self, end_station='xas', time_it = False):
         '''Refresh the ID of the proposal-bmm channel when changing users.
 
         Also flag that posting is not allowed if the Slack channels do not exist
         for this proposal.
 
         '''
+        if time_it:
+            start = time.time()
         def slurp(fname):
             'Slurp a text file into a string.'
             with open(fname, 'r') as myfile:
@@ -137,14 +146,19 @@ class BMMbot():
             return text
 
         data_session          = str(self._redis_client['data_session'])
-        #data_session          = orjson.loads(self._redis_client['data_session'])
         self.pass_id          = data_session.replace('pass-','')
         self.api_url          = self._pass_api.format(pass_id=self.pass_id)  # see line 14
+        if time_it:
+            lap1 = time.time()
+            print(f'lap1 = {lap1-start}')
         response              = requests.get(self.api_url)
         self.channel_data     = json.loads(response.text)
         self.non_chat_channel = None
         self.chat_channel     = None
-
+        if time_it:
+            lap2 = time.time()
+            print(f'lap2 = {lap2-start}')
+        
         for c in self.channel_data:
             if c['name'] == data_session + '-bmm':
                 self.non_chat_channel = c['conversation_id']
@@ -155,6 +169,10 @@ class BMMbot():
             self._post_allowed = False
         self._auth = slurp(self._bmmbot_secret)
         self.client = WebClient(token=self._auth)
+        self.current_end_station=end_station
+        if time_it:
+            end = time.time()
+            print(f'end = {end-start}')
 
     def chat_and_pin(self, text):
         '''Post a text message to the current proposal channel and pin that
