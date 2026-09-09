@@ -3,6 +3,13 @@ Ophyd Async implementation for Eiger detector.
 
 see https://github.com/NSLS2/cditools/blob/main/src/cditools/eiger_async.py and
 https://github.com/NSLS2/cdi-profile-collection/blob/main/startup/30-area-detectors.py#L152
+
+Modifications at BMM:
+
+ + added NDStatistics to EnrichedStats
+ + Made BMMEiger a subclass of EigerDetector
+ + added helper methods for setting and retrieving ROI boundaries
+ + added ROI total counts as hinted signals (hard-wired, awaiting a run-time solution
 """
 
 from __future__ import annotations
@@ -718,7 +725,7 @@ class NDCentroid(StandardReadable, EpicsDevice):
         SignalR[float], PvSuffix("Orientation_RBV"), StandardReadableFormat.CHILD
     ]
 
-class NDSTatistics(StandardReadable, EpicsDevice):
+class NDStatistics(StandardReadable, EpicsDevice):
     MinValue  : A[SignalR[float], PvSuffix("MinValue_RBV"),  StandardReadableFormat.CHILD]
     MaxValue  : A[SignalR[float], PvSuffix("MaxValue_RBV"),  StandardReadableFormat.CHILD]
     MinX      : A[SignalR[float], PvSuffix("MinX_RBV"),      StandardReadableFormat.CHILD]
@@ -733,7 +740,7 @@ class NDSTatistics(StandardReadable, EpicsDevice):
     
 class EnrichedStats(NDStatsIO, StandardReadable):
     centroid: A[NDCentroid, PvSuffix(""), StandardReadableFormat.CHILD] 
-    statistics: A[NDSTatistics, PvSuffix(""), StandardReadableFormat.CHILD] 
+    statistics: A[NDStatistics, PvSuffix(""), StandardReadableFormat.CHILD] 
 
 class BMMEiger(EigerDetector):
     
@@ -767,7 +774,7 @@ class BMMEiger(EigerDetector):
                 "roi2":    NDROIIORW(f"{prefix}ROI2:"),
                 "roi3":    NDROIIORW(f"{prefix}ROI3:"),
                 "roi4":    NDROIIORW(f"{prefix}ROI4:"),
-                "roistat": NDROIStatIO(f"{prefix}ROIStat1:"),
+                #"roistat": NDROIStatIO(f"{prefix}ROIStat1:"),
                 **plugins,
             },
         )

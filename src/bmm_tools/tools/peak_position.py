@@ -14,7 +14,7 @@ def prepare_alignment_scan(rkvs=None, dwell_time=None, inttime=0.1):
 
     '''
     if rkvs is None:
-        cprint('[orange_red1]You have not provided an instance of the local Redis server.[/orange_red1]')
+        cprint('[orange_red1]The Redis server has not been defined.[/orange_red1]')
         cprint('[orange_red1]Unable to prepare for alignment scan.[/orange_red1]')
         yield from null()
         return
