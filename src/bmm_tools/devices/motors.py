@@ -725,7 +725,7 @@ class GonioTable(PseudoPositioner):
     vertical = Cpt(PseudoSingle, limits=(0, 12))
     pitch    = Cpt(PseudoSingle, limits=(-3, 3))
     roll     = Cpt(PseudoSingle, limits=(-3, 3))
-    lateral  = Cpt(PseudoSingle, limits=(-5, 5))
+    lateral  = Cpt(PseudoSingle, limits=(-10, 10))
     yaw      = Cpt(PseudoSingle, limits=(-3, 3))
 
     # The real (or physical) positioners:

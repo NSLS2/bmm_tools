@@ -17,6 +17,10 @@ BMM_dcm = dcm_parameters()
 #from BMM.user_ns.bmm    import BMMuser
 
 
+# dcm_fine_pitch = EpicsMotor('XF:06BM-OP{Mono:1-Ax:FPit}Mtr' , name='dcm_fine_pitch')
+#dcm_fine_roll  = EpicsMotor('XF:06BM-OP{Mono:1-Ax:FRoll}Mtr', name='dcm_fine_roll')
+
+
 # PV for clearing encoder signal loss
 # XF:06BMA-OP{Mono:DCM1-Ax:Bragg}Mtr_ENC_LSS_CLR_CMD.PROC
 
@@ -33,10 +37,11 @@ class DCM(PseudoPositioner):
         self.roll_111 = -0.2633  # Feb 16, 2026
         self.acc_fast = 0.2
 
-        self.pitch = VacuumEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:P2}Mtr',  name='dcm_pitch')
-        self.roll  = VacuumEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:R2}Mtr',  name='dcm_roll')
-        self.x     = XAFSEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:X}Mtr',     name='dcm_x')
-        self._y    = XAFSEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:Y}Mtr',     name='dcm_y')
+        self.pitch     = VacuumEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:P2}Mtr',  name='dcm_pitch')
+        self.roll      = VacuumEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:R2}Mtr',  name='dcm_roll')
+        self.x         = XAFSEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:X}Mtr',     name='dcm_x')
+        self._y        = XAFSEpicsMotor('XF:06BMA-OP{Mono:DCM1-Ax:Y}Mtr',     name='dcm_y')
+        self.finepitch = EpicsMotor('XF:06BM-OP{Mono:1-Ax:FPit}Mtr' ,         name='dcm_finepitch')
         
         super().__init__(*args, **kwargs)
 
@@ -107,9 +112,11 @@ class DCM(PseudoPositioner):
              'Bragg', self.bragg.user_readback.get(),
              '2nd Xtal Perp',  self.perp.user_readback.get(),
              'Para',  self.para.user_readback.get())
-        text += "                                      %s = %7.4f   %s = %8.4f" %\
+        text += "                                      %s = %7.4f   %s = %8.4f\n" %\
             ('Pitch', self.pitch.user_readback.get(),
              'Roll',  self.roll.user_readback.get())
+        text += "                                  %s = %7.4f" %\
+            ('Finepitch', self.finepitch.user_readback.get())
         #text += "                             %s = %7.4f   %s = %8.4f" %\
         #    ('2nd Xtal pitch', self.pitch.user_readback.get(),
         #     '2nd Xtal roll',  self.roll.user_readback.get())

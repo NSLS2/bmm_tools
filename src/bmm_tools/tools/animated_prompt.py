@@ -1,6 +1,14 @@
 
 PROMPTNC = "[YES: y then Enter (or just Enter) ● NO: n then Enter] "
 
+PEAKPROMPTNC = '''
+ y: pluck motor position from plot 
+ n: do nothing
+ p: move to peak position
+ o: move to center of pass position (com)
+ c: move to center of FWHM (cen)
+ 
+ Select y/n/p/o/c then Enter > '''
 
 try:
     from terminaltexteffects.effects.effect_wipe import Wipe

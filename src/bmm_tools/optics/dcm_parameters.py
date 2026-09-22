@@ -17,10 +17,10 @@ class dcm_parameters():
     '''
 
     def __init__(self):
-        self.dspacing_111 = 3.1354087  # 19 May, 2026
+        self.dspacing_111 = 3.1351559  # 14 September, 2026
         self.dspacing_311 = 1.6375686  # 30 March, 2026
 
-        self.offset_111 = 16.936203199999998   #   approximate August 3 2026    16.9300057   # 19 May, 2026
+        self.offset_111 = 16.9378572   # 14 September, 2026
         self.offset_311 = 17.0996517   # 30 March, 2026
         
 ## see calibrate_pitch in BMM/mono_calibration.py
@@ -45,11 +45,23 @@ def approximate_pitch(energy, xtal='111'):
     '''
     if xtal == '111':
         #return(1.309)
-        m = -4.3005e-06
-        b = 1.43668933
-        return(m*energy + b + 0.02)
+        m = -5.1830e-06
+        b = 1.54146904
+        return(m*energy + b)
     else:
         #return(3.9195)
         m = -3.1384e-06
         b = 4.03062239
         return(m*energy + b)
+
+
+def predict_roll(energy=None, xtal='111'):
+    if energy is None:
+        return None
+    if xtal == '111':
+        thisroll = -4.4185e-05*energy + 0.34655051
+        return thisroll
+    else:
+        return -18.1595 # profile_configuration['dcm']['roll_311']
+ 
+

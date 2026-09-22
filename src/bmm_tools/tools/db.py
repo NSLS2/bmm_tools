@@ -1,4 +1,4 @@
-import os, re
+import os, re #, pathlib
 import numpy
 import matplotlib.pyplot as plt
 from rich import print as cprint
@@ -9,14 +9,14 @@ def file_resource(record):
     '''Return the fully resolved path to the data resource associated with
     the record, e.g.
 
-    - the filestore image collected by a BMMSnapshot device 
+    - the filestore image collected by a BMMSnapshot or AxisCaprotoCam device 
     - the HDF5 file associated with an XRF measurement or a 
       fluorescence XAFS scan
+    - the HDF5 file containing images from Pilatus or Eiger
 
     Argument is either a uid string or Tiled catalog.
 
     Anything that cannot be interpreted to return a path will return None.
-    global bmm_catalog
 
     This intends to work with "BlueskyRun v2.0" (Mongo backed) and
     "BlueskyRun v3.0 streams" (SQL backed)
@@ -44,6 +44,14 @@ def file_resource(record):
                 found.append(this)
             else:
                 found.append(rp)
+        elif d[0] == 'stream_resource':
+            uri = d[1]['uri']
+            f = uri.replace('file://localhost', '')
+            if f[-1] == '/':
+                f = f[:-1]
+            found.append(f)
+            #p = pathlib.PurePath(f)
+            #found.append( '/'.join(p.parts[-6:]))
     return(found)
 
 
@@ -118,7 +126,7 @@ def file_resource_old_version(record):
         return(None)
 
 def show_snapshot(record):
-    '''Quickly plot a snapshot image from DataBroker given its UID.
+    '''Quickly plot a snapshot image from Tiled given its UID.
     '''
     global bmm_catalog    
     if bmm_catalog is None:
@@ -151,7 +159,7 @@ def show_snapshot(record):
         print('No image found...')
         return
     
-    print(f'Showing {file_resource(record)}')
+    print(f'Showing {file_resource(record)[0]}')
     plt.imshow(record[thing][0,:])
     plt.grid(False)
         

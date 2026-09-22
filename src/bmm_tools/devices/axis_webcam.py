@@ -106,7 +106,7 @@ class AxisCaprotoCam(Device):
     def describe(self):
         res = super().describe()
         res[self.image.name].update(
-            {"shape": (1080, 1920), "dtype_str": "<f4"}
+            {"shape": (1, 1080, 1920, 3), "dtype_str": "<f4"}  # this is the correct post-migration shape in Tiled
         )
         return res
 
