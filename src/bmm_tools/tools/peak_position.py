@@ -24,7 +24,7 @@ def prepare_alignment_scan(rkvs=None, dwell_time=None, inttime=0.1):
 
 
 
-def fetch_peak_position_via_redis(rkvs=None, maxtries=6, verbose=False):
+def fetch_peak_position_via_redis(rkvs=None, maxtries=7, verbose=False):
     '''Retrieve a result found by the Kafka consumer and posted to redis.
 
     The function prepare_alignment_scan() should have been called
@@ -42,10 +42,12 @@ def fetch_peak_position_via_redis(rkvs=None, maxtries=6, verbose=False):
     count = 0
     #if verbose: print(f"{count = }, {top = }")
     while top < UNSET_PEAK_POSITION:
-        time.sleep(0.1 * 2**count)
         top = float(rkvs.get('BMM:peakposition').decode('utf8'))
         count += 1
-        if verbose: print(f"{count = }, {top = }", flush=True)
+        sleepfor = 0.1 * 2**count
+        if verbose: print(f"{count = }, {sleepfor = }, {top = }", flush=True)
         if count > maxtries:
             return(None)
+        if top < UNSET_PEAK_POSITION: 
+            time.sleep(sleepfor)
     return top

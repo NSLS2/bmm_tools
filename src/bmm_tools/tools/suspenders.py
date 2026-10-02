@@ -7,6 +7,7 @@ from rich import print as cprint
 from bmm_tools.tools.messages import bold_msg, error_msg, warning_msg, whisper
 from bmm_tools.tools.animated_prompt import PROMPTNC, animated_prompt
 
+
 TAB = '\t\t\t\t'
 
 class BMMSuspenders():
@@ -34,12 +35,12 @@ class BMMSuspenders():
         try:
             #print(self.ring.filltarget.connected)
             #print(self.ring.filltarget.get())
-            if self.ring.filltarget.connected is True and self.ring.filltarget.get() > 20:
-                self.suspender_ring_current = SuspendFloor(self.ring.current, 10, resume_thresh=0.9 * self.ring.filltarget.get(),
-                                                           sleep=120,
-                                                           pre_plan=self.beamdown_message,
-                                                           post_plan=self.beamup_message)
-                self.all_suspenders.append(self.suspender_ring_current)
+            #if self.ring.filltarget.connected is True and self.ring.filltarget.get() > 20:
+            self.suspender_ring_current = SuspendFloor(self.ring.current, 10, resume_thresh=0.9 * self.ring.filltarget.get(),
+                                                       sleep=120,
+                                                       pre_plan=self.beamdown_message,
+                                                       post_plan=self.beamup_message)
+            self.all_suspenders.append(self.suspender_ring_current)
         except Exception as e:
             self.errors += f'failed to create ring current suspender: {e}\n'
             cprint(f'[orange_red1]{TAB}failed to create ring current suspender: {e}[/orange_red1]')

@@ -774,7 +774,7 @@ class BMMEiger(EigerDetector):
                 "roi2":    NDROIIORW(f"{prefix}ROI2:"),
                 "roi3":    NDROIIORW(f"{prefix}ROI3:"),
                 "roi4":    NDROIIORW(f"{prefix}ROI4:"),
-                #"roistat": NDROIStatIO(f"{prefix}ROIStat1:"),
+                "roistat": NDROIStatIO(f"{prefix}ROIStat1:"),
                 **plugins,
             },
         )
@@ -782,6 +782,7 @@ class BMMEiger(EigerDetector):
             PluginSignalDataLogic(driver=self.driver, signal=self.stats1.total, hinted=True),
             PluginSignalDataLogic(driver=self.driver, signal=self.stats2.total, hinted=True),
             PluginSignalDataLogic(driver=self.driver, signal=self.stats3.total, hinted=True),
+            PluginSignalDataLogic(driver=self.driver, signal=self.stats1.statistics.MaxValue, hinted=True),
         ]
         self.add_detector_logics(*hinted_signals)
 
