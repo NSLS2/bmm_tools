@@ -621,11 +621,11 @@ class Mirrors(PseudoPositioner):
         boxedtext(self.where(), title=f'{self.name} {stripe}', color='green')
 
     # The pseudo positioner axes:
-    vertical = Cpt(PseudoSingle, limits=(-8, 8))
-    lateral  = Cpt(PseudoSingle, limits=(-16, 16))
-    pitch    = Cpt(PseudoSingle, limits=(-5.5, 5.5))
-    roll     = Cpt(PseudoSingle, limits=(-3, 3))
-    yaw      = Cpt(PseudoSingle, limits=(-3, 3))
+    vertical = Cpt(PseudoSingle, limits=(-8, 8), egu='mm')
+    lateral  = Cpt(PseudoSingle, limits=(-16, 16), egu='mm')
+    pitch    = Cpt(PseudoSingle, limits=(-5.5, 5.5), egu='deg')
+    roll     = Cpt(PseudoSingle, limits=(-3, 3), egu='deg')
+    yaw      = Cpt(PseudoSingle, limits=(-3, 3), egu='deg')
 
 
     # The real (or physical) positioners:
@@ -674,13 +674,13 @@ class XAFSTable(PseudoPositioner):
         boxedtext(self.where(), title='XAFS Table', color='green')
 
     # The pseudo positioner axes:
-    vertical = Cpt(PseudoSingle, limits=(5, 145))
-    pitch    = Cpt(PseudoSingle, limits=(-8, 6))
+    vertical = Cpt(PseudoSingle, limits=(5, 145), egu='mm')
+    pitch    = Cpt(PseudoSingle, limits=(-8, 6), egu='deg')
     #roll     = Cpt(PseudoSingle, limits=(5, 5))
 
 
     # The real (or physical) positioners:
-    yu  = Cpt(EpicsMotor, 'YU}Mtr')
+    yu = Cpt(EpicsMotor, 'YU}Mtr')
     yd = Cpt(EpicsMotor, 'YDI}Mtr')
     #ydo = Cpt(EpicsMotor, 'YDO}Mtr')
 

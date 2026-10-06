@@ -132,7 +132,7 @@ class DCM(PseudoPositioner):
             self._crystal = '311'
 
     # The pseudo positioner axes:
-    energy = Cpt(PseudoSingle, limits=(2900, 25000))
+    energy = Cpt(PseudoSingle, limits=(2900, 25000), egu='eV')
 
 
     # The real (or physical) positioners, but only bragg, para, and perp are components, the others are just attributes

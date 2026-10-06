@@ -36,10 +36,10 @@ class StandardSlits(PseudoPositioner):
         self.outboard.enable()
 
     # The pseudo positioner axes:
-    vsize   = Cpt(PseudoSingle, limits=(-15, 20))
-    vcenter = Cpt(PseudoSingle, limits=(-15, 10))
-    hsize   = Cpt(PseudoSingle, limits=(-1, 20))
-    hcenter = Cpt(PseudoSingle, limits=(-10, 10))
+    vsize   = Cpt(PseudoSingle, limits=(-15, 20), egu='mm')
+    vcenter = Cpt(PseudoSingle, limits=(-15, 10), egu='mm')
+    hsize   = Cpt(PseudoSingle, limits=(-1, 20),  egu='mm')
+    hcenter = Cpt(PseudoSingle, limits=(-10, 10), egu='mm')
 
     # The real (or physical) positioners:
     top      = Cpt(FMBOThinEpicsMotor, 'T}Mtr')
@@ -91,10 +91,10 @@ class GonioSlits(PseudoPositioner):
         cprint(Panel(self.where(), title=self.name, title_align='left', highlight=True, expand=False, border_style='dark_goldenrod'))
 
     # The pseudo positioner axes:
-    vsize   = Cpt(PseudoSingle, limits=(-1, 20))
-    vcenter = Cpt(PseudoSingle, limits=(-10,10))
-    hsize   = Cpt(PseudoSingle, limits=(-1, 20))
-    hcenter = Cpt(PseudoSingle, limits=(-10,10))
+    vsize   = Cpt(PseudoSingle, limits=(-1, 20), egu='mm')
+    vcenter = Cpt(PseudoSingle, limits=(-10,10), egu='mm')
+    hsize   = Cpt(PseudoSingle, limits=(-1, 20), egu='mm')
+    hcenter = Cpt(PseudoSingle, limits=(-10,10), egu='mm')
 
     # The real (or physical) positioners:
     t = Cpt(EpicsMotor, 'T}Mtr')
