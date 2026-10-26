@@ -6,9 +6,9 @@ def com(signal):
     return int(center_of_mass(signal)[0])
 
 
-import pandas
+from numpy import argmax
 def peak(signal):
     '''Return the index of the maximum of a 1D array.  This is used to find the
     center of a peak-like scan, e.g. rocking curve or slit height.'''
-    return pandas.Series.idxmax(signal)
+    return argmax(signal)
 

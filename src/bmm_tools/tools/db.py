@@ -38,7 +38,7 @@ def file_resource(record):
         if d[0] == 'resource':
             rp = d[1]['resource_path']
             if not rp.startswith('/nsls2'):
-                rp = d[1]['root'] + d[1]['resource_path']
+                rp = d[1]['root'] + '/' +  d[1]['resource_path']
             if '_%d' in rp or re.search(r'%\d\.\dd', rp) is not None:
                 this = rp % 0
                 found.append(this)
